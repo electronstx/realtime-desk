@@ -6,6 +6,7 @@
 		initSocket();
 
 		return () => {
+			socket?.removeAllListeners(); 
 			socket?.disconnect();
 		}
 	});

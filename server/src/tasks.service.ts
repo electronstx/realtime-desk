@@ -11,12 +11,20 @@ export class TasksService implements OnModuleInit {
     
     const data = await this.client.get('tasks');
     if (!data) {
-      const initialTasks = [
-        { id: '1', title: 'Сделать чистую архитектуру', status: 'todo' },
-        { id: '2', title: 'Настроить Redis', status: 'done' },
-      ];
-      await this.client.set('tasks', JSON.stringify(initialTasks));
+      await this.client.set('tasks', JSON.stringify([]));
     }
+  }
+
+  async createTask(title: string) {
+    const tasks = await this.getAllTasks();
+    const newTask = {
+        id: Date.now().toString(),
+        title,
+        status: 'todo'
+    };
+    const updatedTasks = [...tasks, newTask];
+    await this.client.set('tasks', JSON.stringify(updatedTasks));
+    return updatedTasks;
   }
 
   async getAllTasks() {
@@ -29,6 +37,14 @@ export class TasksService implements OnModuleInit {
     const updatedTasks = tasks.map((t: any) => 
       t.id === id ? { ...t, status: newStatus } : t
     );
+    await this.client.set('tasks', JSON.stringify(updatedTasks));
+    return updatedTasks;
+  }
+
+  async deleteTask(id: string) {
+    const tasks = await this.getAllTasks();
+    const updatedTasks = tasks.filter((t: any) => t.id !== id);
+    
     await this.client.set('tasks', JSON.stringify(updatedTasks));
     return updatedTasks;
   }
