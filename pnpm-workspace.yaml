@@ -1,0 +1,8 @@
+packages:
+  - client
+  - server
+
+onlyBuiltDependencies:
+  - '@nestjs/core'
+  - unrs-resolver
+  - esbuild
